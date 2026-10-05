@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SSLWatch — SSL Certificate Expiry Monitor</title>
+  <meta name="description" content="Monitor SSL certificate expiry for all your domains. Get email alerts before certs expire. $9/month." />
+  <link rel="canonical" href="https://lior-seats.github.io/sslwatch-waitlist/" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://lior-seats.github.io/sslwatch-waitlist/" />
+  <meta property="og:title" content="SSLWatch — SSL Certificate Expiry Monitor" />
+  <meta property="og:description" content="Monitor SSL certificate expiry for all your domains. Get email alerts before certs expire. $9/month." />
+  <meta property="og:image" content="https://lior-seats.github.io/sslwatch-waitlist/og-image.png" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SSLWatch — SSL Certificate Expiry Monitor" />
+  <meta name="twitter:description" content="Monitor SSL certificate expiry for all your domains. Get email alerts before certs expire. $9/month." />
+  <meta name="twitter:image" content="https://lior-seats.github.io/sslwatch-waitlist/og-image.png" />
+  <!-- Hit pixel -->
+  <script>(function(){fetch('https://agent-control-plane-w3m9.onrender.com/api/hit?page=sslwatch-waitlist',{mode:'no-cors'});}());</script>
+  <style>
+    :root {
+      --bg:        #0d0f14;
+      --surface:   #141720;
+      --surface2:  #1b1f2c;
+      --border:    #252a38;
+      --accent:    #4f6ef7;
+      --accent-h:  #6b85ff;
+      --danger:    #f75c5c;
+      --text:      #e8eaf2;
+      --muted:     #8890a8;
+      --success:   #34d399;
+      --radius:    10px;
+      --shadow:    0 4px 32px rgba(0,0,0,0.45);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-h); }
+
+    /* ─── NAV ─── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(13,15,20,0.92);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .nav-badge {
+      background: rgba(79,110,247,0.18);
+      color: var(--accent);
+      border: 1px solid rgba(79,110,247,0.35);
+      padding: 0.25rem 0.75rem;
+      border-radius: 99px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      text-align: center;
+      padding: 6rem 1.5rem 4.5rem;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(247,92,92,0.12);
+      border: 1px solid rgba(247,92,92,0.3);
+      color: var(--danger);
+      padding: 0.35rem 0.9rem;
+      border-radius: 99px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 1.8rem;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.13;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.3rem;
+      background: linear-gradient(135deg, #e8eaf2 30%, #8890a8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 1.2rem;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.6;
+    }
+
+    /* ─── FREE TOOL NUDGE ─── */
+    .tool-nudge {
+      max-width: 680px;
+      margin: 0 auto 1.5rem;
+      background: rgba(79,110,247,0.07);
+      border: 1px solid rgba(79,110,247,0.2);
+      border-radius: var(--radius);
+      padding: 0.85rem 1.25rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    .tool-nudge a { font-weight: 600; }
+
+    /* ─── FORM ─── */
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      max-width: 500px;
+      margin: 0 auto 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .form-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .form-desc {
+      font-size: 0.875rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .email-input {
+      flex: 1;
+      min-width: 200px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .email-input::placeholder { color: var(--muted); }
+    .email-input:focus { border-color: var(--accent); }
+
+    .submit-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .submit-btn:hover { background: var(--accent-h); }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .form-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.85rem;
+      text-align: center;
+    }
+
+    #formMsg {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: none;
+    }
+    #formMsg.success {
+      background: rgba(52,211,153,0.1);
+      border: 1px solid rgba(52,211,153,0.35);
+      color: var(--success);
+    }
+    #formMsg.error {
+      background: rgba(247,92,92,0.1);
+      border: 1px solid rgba(247,92,92,0.3);
+      color: var(--danger);
+    }
+
+    /* ─── PRICING ─── */
+    .pricing-badge {
+      max-width: 500px;
+      margin: 0 auto 4rem;
+      background: linear-gradient(135deg, rgba(79,110,247,0.12), rgba(79,110,247,0.04));
+      border: 1px solid rgba(79,110,247,0.3);
+      border-radius: var(--radius);
+      padding: 1.5rem 2rem;
+      text-align: center;
+    }
+    .price-main {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+    .price-main span { font-size: 1rem; font-weight: 400; color: var(--muted); }
+    .price-early {
+      margin-top: 0.4rem;
+      font-size: 0.9rem;
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    /* ─── PAIN ─── */
+    .section {
+      max-width: 900px;
+      margin: 0 auto 5rem;
+      padding: 0 1.5rem;
+    }
+
+    .section-label {
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .section h2 {
+      text-align: center;
+      font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 2.5rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    .card-icon {
+      font-size: 1.6rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* ─── FEATURES ─── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .feat {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .feat-check {
+      width: 22px;
+      height: 22px;
+      background: rgba(52,211,153,0.15);
+      border: 1px solid rgba(52,211,153,0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: var(--success);
+      flex-shrink: 0;
+      margin-top: 0.15rem;
+    }
+
+    .feat h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.2rem; }
+    .feat p { font-size: 0.85rem; color: var(--muted); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    🔒 SSLWatch
+  </div>
+  <span class="nav-badge">Early Access</span>
+</nav>
+
+<!-- ─── HERO ─── -->
+<div class="hero">
+  <div class="hero-eyebrow">⚠️ SSL monitoring for developers</div>
+  <h1>Never Let an SSL Certificate Expire Again</h1>
+  <p class="hero-sub">SSLWatch monitors your domains 24/7 and sends email alerts 30, 14, 7, and 1 day before any certificate expires.</p>
+</div>
+
+<!-- Free tool nudge -->
+<div class="tool-nudge">
+  Not sure if your cert is expiring soon? →
+  <a href="https://lior-seats.github.io/ssl-cert-checker/">Check any domain free with our SSL Certificate Checker</a>
+</div>
+
+<!-- ─── WAITLIST FORM ─── -->
+<div class="form-card">
+  <div class="form-title">Join the SSLWatch waitlist</div>
+  <div class="form-desc">Be first to get early access + 3 months free.</div>
+  <div class="input-group">
+    <input
+      type="email"
+      id="emailInput"
+      class="email-input"
+      placeholder="you@yourcompany.com"
+      autocomplete="email"
+    />
+    <button class="submit-btn" id="submitBtn" onclick="joinWaitlist()">Join Waitlist</button>
+  </div>
+  <div id="formMsg"></div>
+  <div class="form-note">No spam. Just launch notification + early-access invite.</div>
+</div>
+
+<!-- ─── PRICING ─── -->
+<div class="pricing-badge">
+  <div class="price-main">$9 <span>/ month</span></div>
+  <div class="price-early">🎉 Early access: 3 months free for waitlist members</div>
+</div>
+
+<!-- ─── PAIN SECTION ─── -->
+<div class="section">
+  <div class="section-label">The problem</div>
+  <h2>SSL certificates expire silently — until they don't</h2>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🤫</div>
+      <h3>Silent expiry</h3>
+      <p>SSL certs expire without warning. You find out when customers can't reach your site, not before. By then the damage is done.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🚫</div>
+      <h3>Security warnings</h3>
+      <p>Expired certs show "Not Secure" warnings in every browser. Users leave immediately. Trust is gone in an instant.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">😬</div>
+      <h3>It happens to everyone</h3>
+      <p>Even Let's Encrypt auto-renewal fails silently. CDN certs are forgotten. Client sites drift. Nobody notices until a customer does.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FEATURES ─── -->
+<div class="section">
+  <div class="section-label">What SSLWatch does</div>
+  <h2>Everything you need. Nothing you don't.</h2>
+  <div class="features-grid">
+    <div class="feat">
+      <div class="feat-check">✓</div>
+      <div>
+        <h4>Monitor up to 50 domains</h4>
+        <p>Your main site, subdomains, APIs, CDN endpoints, client sites — all in one dashboard.</p>
+      </div>
+    </div>
+    <div class="feat">
+      <div class="feat-check">✓</div>
+      <div>
+        <h4>Email alerts at 30, 14, 7 &amp; 1 day</h4>
+        <p>Multiple touchpoints before expiry so you always have time to renew.</p>
+      </div>
+    </div>
+    <div class="feat">
+      <div class="feat-check">✓</div>
+      <div>
+        <h4>Works for any domain</h4>
+        <p>Your CDN, subdomains, client sites, APIs — if it has an SSL cert, SSLWatch monitors it.</p>
+      </div>
+    </div>
+    <div class="feat">
+      <div class="feat-check">✓</div>
+      <div>
+        <h4>Instant certificate dashboard</h4>
+        <p>See all your certs' status in one view. Green, yellow, red — know what needs attention at a glance.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── BOTTOM CTA ─── -->
+<div class="section" style="text-align:center; margin-bottom: 5rem;">
+  <h2 style="margin-bottom:1rem">Join the waitlist today</h2>
+  <p style="color:var(--muted);margin-bottom:2rem;font-size:1.05rem">Early members get 3 months free when we launch.</p>
+  <div style="display:flex;gap:0.65rem;justify-content:center;flex-wrap:wrap;max-width:440px;margin:0 auto">
+    <input
+      type="email"
+      id="emailInput2"
+      class="email-input"
+      placeholder="you@yourcompany.com"
+      style="flex:1;min-width:200px"
+    />
+    <button class="submit-btn" onclick="joinWaitlist2()">Join Waitlist</button>
+  </div>
+  <div id="formMsg2" style="margin-top:1rem;font-size:0.9rem"></div>
+</div>
+
+<footer>
+  <p>SSLWatch · SSL certificate expiry monitoring · $9/month</p>
+  <p style="margin-top:0.5rem">
+    <a href="https://lior-seats.github.io/ssl-cert-checker/">Free SSL certificate checker tool</a>
+  </p>
+</footer>
+
+<script>
+  async function submitEmail(email, msgEl) {
+    if (!email || !email.includes('@')) {
+      msgEl.className = 'error';
+      msgEl.style.display = 'block';
+      msgEl.textContent = 'Please enter a valid email address.';
+      return;
+    }
+    const btn = document.getElementById('submitBtn');
+    if (btn) btn.disabled = true;
+
+    try {
+      const resp = await fetch('https://agent-control-plane-w3m9.onrender.com/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, source: 'sslwatch' })
+      });
+      if (resp.ok) {
+        msgEl.className = 'success';
+        msgEl.style.display = 'block';
+        msgEl.textContent = "🎉 You're on the list! We'll email you when SSLWatch launches.";
+        document.getElementById('emailInput') && (document.getElementById('emailInput').value = '');
+        document.getElementById('emailInput2') && (document.getElementById('emailInput2').value = '');
+      } else {
+        throw new Error('server error');
+      }
+    } catch (e) {
+      msgEl.className = 'error';
+      msgEl.style.display = 'block';
+      msgEl.textContent = 'Something went wrong. Please try again.';
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  function joinWaitlist() {
+    const email = document.getElementById('emailInput').value.trim();
+    submitEmail(email, document.getElementById('formMsg'));
+  }
+
+  function joinWaitlist2() {
+    const email = document.getElementById('emailInput2').value.trim();
+    const msg2 = document.getElementById('formMsg2');
+    submitEmail(email, msg2);
+  }
+
+  // Enter key support
+  ['emailInput', 'emailInput2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        id === 'emailInput' ? joinWaitlist() : joinWaitlist2();
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
