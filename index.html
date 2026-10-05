@@ -17,8 +17,9 @@
   <meta name="twitter:title" content="SSLWatch — SSL Certificate Expiry Monitor" />
   <meta name="twitter:description" content="Monitor SSL certificate expiry for all your domains. Get email alerts before certs expire. $9/month." />
   <meta name="twitter:image" content="https://lior-seats.github.io/sslwatch-waitlist/og-image.png" />
-  <!-- Hit pixel -->
-  <script>(function(){fetch('https://agent-control-plane-w3m9.onrender.com/api/hit?page=sslwatch-waitlist',{mode:'no-cors'});}());</script>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAzMiAzMic+CiAgPHJlY3Qgd2lkdGg9JzMyJyBoZWlnaHQ9JzMyJyByeD0nNicgZmlsbD0nIzRmNmVmNycvPgogIDxwYXRoIGQ9J00xNiA0TDI0IDhWMThDMjQgMjMgMjAgMjcgMTYgMjhDMTIgMjcgOCAyMyA4IDE4VjhMMTYgNFonIGZpbGw9J3doaXRlJyBvcGFjaXR5PScwLjE1Jy8+CiAgPHBhdGggZD0nTTE2IDZMMjIgOVYxN0MyMiAyMS41IDE5IDI1IDE2IDI2QzEzIDI1IDEwIDIxLjUgMTAgMTdWOUwxNiA2Wicgc3Ryb2tlPSd3aGl0ZScgc3Ryb2tlLXdpZHRoPScxLjUnIGZpbGw9J25vbmUnLz4KICA8cGF0aCBkPSdNMTMgMTZMMTUgMThMMTkgMTQnIHN0cm9rZT0nd2hpdGUnIHN0cm9rZS13aWR0aD0nMi4yJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGZpbGw9J25vbmUnLz4KPC9zdmc+Cg==">
+
   <style>
     :root {
       --bg:        #0d0f14;
@@ -31,6 +32,7 @@
       --text:      #e8eaf2;
       --muted:     #8890a8;
       --success:   #34d399;
+      --warning:   #f0b429;
       --radius:    10px;
       --shadow:    0 4px 32px rgba(0,0,0,0.45);
     }
@@ -71,6 +73,8 @@
       letter-spacing: -0.02em;
       color: var(--text);
     }
+
+    .logo svg { flex-shrink: 0; }
 
     .nav-badge {
       background: rgba(79,110,247,0.18);
@@ -119,420 +123,734 @@
       background-clip: text;
     }
 
-    .hero-sub {
-      font-size: 1.2rem;
-      color: var(--muted);
-      max-width: 600px;
-      margin: 0 auto 2.5rem;
-      line-height: 1.6;
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--accent) 0%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
-    /* ─── FREE TOOL NUDGE ─── */
-    .tool-nudge {
-      max-width: 680px;
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 600px;
       margin: 0 auto 1.5rem;
+      line-height: 1.7;
+    }
+
+    /* ─── FREE TOOL CALLOUT ─── */
+    .free-tool-strip {
       background: rgba(79,110,247,0.07);
       border: 1px solid rgba(79,110,247,0.2);
       border-radius: var(--radius);
-      padding: 0.85rem 1.25rem;
-      font-size: 0.9rem;
+      padding: 0.75rem 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.88rem;
       color: var(--muted);
-      text-align: center;
+      margin-bottom: 2.5rem;
     }
-    .tool-nudge a { font-weight: 600; }
 
-    /* ─── FORM ─── */
-    .form-card {
+    .free-tool-strip a {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .hero-form {
+      display: flex;
+      gap: 0.65rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .hero-form input[type="email"] {
+      flex: 1 1 200px;
+      padding: 0.85rem 1.1rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .hero-form input[type="email"]:focus { border-color: var(--accent); }
+    .hero-form input[type="email"]::placeholder { color: var(--muted); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.85rem 1.6rem;
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover { background: var(--accent-h); transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .hero-sub {
+      margin-top: 1rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    /* ─── THANK-YOU ─── */
+    .thank-you {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      color: var(--success);
+      font-weight: 600;
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+
+    /* ─── DOMAINS STRIP ─── */
+    .domains-strip {
+      text-align: center;
+      padding: 2rem 1.5rem 3rem;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .domains-strip p {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 1.4rem;
+      font-weight: 600;
+    }
+
+    .domain-pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.65rem;
+    }
+
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 0.45rem 1rem;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    .pill-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .pill-dot.expiring {
+      background: var(--warning);
+      animation: pulse 2s infinite;
+    }
+
+    .pill-dot.critical {
+      background: var(--danger);
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    /* ─── SECTION WRAPPER ─── */
+    section {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 5rem 1.5rem;
+    }
+
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 0.9rem;
+    }
+
+    .section-heading {
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .section-sub {
+      color: var(--muted);
+      max-width: 560px;
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    /* ─── PAIN SECTION ─── */
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.2rem;
+      margin-top: 3rem;
+    }
+
+    .pain-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 2.5rem;
-      max-width: 500px;
-      margin: 0 auto 2rem;
-      box-shadow: var(--shadow);
+      padding: 1.8rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
     }
 
-    .form-title {
-      font-size: 1.1rem;
+    .pain-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--danger), transparent);
+    }
+
+    .pain-card:hover { border-color: rgba(247,92,92,0.4); }
+
+    .pain-icon {
+      width: 40px; height: 40px;
+      background: rgba(247,92,92,0.12);
+      border: 1px solid rgba(247,92,92,0.25);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.1rem;
+    }
+
+    .pain-card h3 {
+      font-size: 1.05rem;
       font-weight: 700;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.55rem;
+      line-height: 1.3;
     }
 
-    .form-desc {
-      font-size: 0.875rem;
+    .pain-card p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+    }
+
+    /* ─── FEATURE SECTION ─── */
+    .solution-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.2rem;
+      margin-top: 3rem;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.8rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .feature-card::before {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      margin-bottom: 1.4rem;
+      border-radius: 99px;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(79,110,247,0.4);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      width: 40px; height: 40px;
+      background: rgba(79,110,247,0.1);
+      border: 1px solid rgba(79,110,247,0.25);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.1rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      line-height: 1.35;
+    }
+
+    .feature-card p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    /* ─── PRICING ─── */
+    .pricing-section {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 0 1.5rem 5rem;
+    }
+
+    .pricing-card {
+      background: var(--surface);
+      border: 1px solid rgba(79,110,247,0.4);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      max-width: 480px;
+      margin: 2rem auto 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pricing-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), #a78bfa);
+    }
+
+    .pricing-badge {
+      display: inline-block;
+      background: rgba(52,211,153,0.15);
+      border: 1px solid rgba(52,211,153,0.35);
+      color: var(--success);
+      padding: 0.3rem 0.85rem;
+      border-radius: 99px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+    }
+
+    .pricing-amount {
+      font-size: 3.2rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .pricing-amount sup {
+      font-size: 1.4rem;
+      font-weight: 700;
+      vertical-align: top;
+      margin-top: 0.5rem;
+    }
+
+    .pricing-period {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .pricing-features {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .pricing-features li {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+
+    .pricing-features li::before {
+      content: '';
+      width: 18px; height: 18px;
+      background: rgba(52,211,153,0.15);
+      border: 1px solid rgba(52,211,153,0.35);
+      border-radius: 50%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M2 5l2.5 2.5L8 3' stroke='%2334d399' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      flex-shrink: 0;
+    }
+
+    .early-access-note {
+      background: rgba(79,110,247,0.08);
+      border: 1px solid rgba(79,110,247,0.2);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
       color: var(--muted);
       margin-bottom: 1.5rem;
     }
 
-    .input-group {
+    .early-access-note strong { color: var(--accent); }
+
+    /* ─── WAITLIST SECTION ─── */
+    .waitlist-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .waitlist-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 5rem 1.5rem;
+      text-align: center;
+    }
+
+    .waitlist-inner .section-heading { margin-bottom: 0.8rem; }
+    .waitlist-inner .section-sub { margin: 0 auto 2.5rem; }
+
+    .waitlist-form {
       display: flex;
       gap: 0.65rem;
+      justify-content: center;
       flex-wrap: wrap;
+      max-width: 480px;
+      margin: 0 auto;
     }
 
-    .email-input {
-      flex: 1;
-      min-width: 200px;
-      background: var(--surface2);
+    .waitlist-form input[type="email"] {
+      flex: 1 1 200px;
+      padding: 0.9rem 1.1rem;
+      border-radius: var(--radius);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
+      background: var(--bg);
       color: var(--text);
-      font-size: 1rem;
+      font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.15s;
+      transition: border-color 0.2s;
     }
-    .email-input::placeholder { color: var(--muted); }
-    .email-input:focus { border-color: var(--accent); }
 
-    .submit-btn {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
-      white-space: nowrap;
-    }
-    .submit-btn:hover { background: var(--accent-h); }
-    .submit-btn:active { transform: scale(0.98); }
-    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .waitlist-form input[type="email"]:focus { border-color: var(--accent); }
+    .waitlist-form input[type="email"]::placeholder { color: var(--muted); }
 
     .form-note {
+      margin-top: 0.9rem;
       font-size: 0.8rem;
       color: var(--muted);
-      margin-top: 0.85rem;
-      text-align: center;
     }
-
-    #formMsg {
-      margin-top: 1rem;
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      display: none;
-    }
-    #formMsg.success {
-      background: rgba(52,211,153,0.1);
-      border: 1px solid rgba(52,211,153,0.35);
-      color: var(--success);
-    }
-    #formMsg.error {
-      background: rgba(247,92,92,0.1);
-      border: 1px solid rgba(247,92,92,0.3);
-      color: var(--danger);
-    }
-
-    /* ─── PRICING ─── */
-    .pricing-badge {
-      max-width: 500px;
-      margin: 0 auto 4rem;
-      background: linear-gradient(135deg, rgba(79,110,247,0.12), rgba(79,110,247,0.04));
-      border: 1px solid rgba(79,110,247,0.3);
-      border-radius: var(--radius);
-      padding: 1.5rem 2rem;
-      text-align: center;
-    }
-    .price-main {
-      font-size: 2.2rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: var(--text);
-    }
-    .price-main span { font-size: 1rem; font-weight: 400; color: var(--muted); }
-    .price-early {
-      margin-top: 0.4rem;
-      font-size: 0.9rem;
-      color: var(--success);
-      font-weight: 600;
-    }
-
-    /* ─── PAIN ─── */
-    .section {
-      max-width: 900px;
-      margin: 0 auto 5rem;
-      padding: 0 1.5rem;
-    }
-
-    .section-label {
-      text-align: center;
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.75rem;
-    }
-
-    .section h2 {
-      text-align: center;
-      font-size: clamp(1.5rem, 3.5vw, 2.2rem);
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      margin-bottom: 2.5rem;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.25rem;
-    }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-    }
-
-    .card-icon {
-      font-size: 1.6rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .card h3 {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .card p {
-      font-size: 0.875rem;
-      color: var(--muted);
-      line-height: 1.55;
-    }
-
-    /* ─── FEATURES ─── */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.25rem;
-    }
-
-    .feat {
-      display: flex;
-      gap: 0.75rem;
-      align-items: flex-start;
-    }
-
-    .feat-check {
-      width: 22px;
-      height: 22px;
-      background: rgba(52,211,153,0.15);
-      border: 1px solid rgba(52,211,153,0.3);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      color: var(--success);
-      flex-shrink: 0;
-      margin-top: 0.15rem;
-    }
-
-    .feat h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.2rem; }
-    .feat p { font-size: 0.85rem; color: var(--muted); }
 
     /* ─── FOOTER ─── */
     footer {
       text-align: center;
-      padding: 2.5rem 1.5rem;
-      border-top: 1px solid var(--border);
-      font-size: 0.82rem;
+      padding: 2rem 1.5rem;
       color: var(--muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
     }
-    footer a { color: var(--muted); }
-    footer a:hover { color: var(--text); }
+
+    @keyframes input-pulse-anim {
+      0%   { border-color: var(--accent); box-shadow: 0 0 0 0 rgba(79,110,247,0); }
+      50%  { border-color: #a78bfa;       box-shadow: 0 0 0 5px rgba(79,110,247,0.28); }
+      100% { border-color: var(--accent); box-shadow: 0 0 0 0 rgba(79,110,247,0); }
+    }
+
+    @media (max-width: 600px) {
+      nav { padding: 1rem 1.2rem; }
+      .hero { padding: 4rem 1.2rem 3rem; }
+      .hero-form { flex-direction: column; align-items: stretch; }
+      .waitlist-form { flex-direction: column; align-items: stretch; }
+    }
   </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
   <div class="logo">
-    🔒 SSLWatch
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="26" height="26" rx="7" fill="#4f6ef7" opacity="0.15"/>
+      <path d="M13 4L20 8V16C20 20.5 16.8 24 13 25C9.2 24 6 20.5 6 16V8L13 4Z" stroke="#4f6ef7" stroke-width="1.7" stroke-linejoin="round" fill="none"/>
+      <path d="M10 13.5L12.2 15.7L16.5 11" stroke="#4f6ef7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    SSLWatch
   </div>
   <span class="nav-badge">Early Access</span>
 </nav>
 
-<!-- ─── HERO ─── -->
+<!-- HERO -->
 <div class="hero">
-  <div class="hero-eyebrow">⚠️ SSL monitoring for developers</div>
-  <h1>Never Let an SSL Certificate Expire Again</h1>
-  <p class="hero-sub">SSLWatch monitors your domains 24/7 and sends email alerts 30, 14, 7, and 1 day before any certificate expires.</p>
-</div>
-
-<!-- Free tool nudge -->
-<div class="tool-nudge">
-  Not sure if your cert is expiring soon? →
-  <a href="https://lior-seats.github.io/ssl-cert-checker/">Check any domain free with our SSL Certificate Checker</a>
-</div>
-
-<!-- ─── WAITLIST FORM ─── -->
-<div class="form-card">
-  <div class="form-title">Join the SSLWatch waitlist</div>
-  <div class="form-desc">Be first to get early access + 3 months free.</div>
-  <div class="input-group">
-    <input
-      type="email"
-      id="emailInput"
-      class="email-input"
-      placeholder="you@yourcompany.com"
-      autocomplete="email"
-    />
-    <button class="submit-btn" id="submitBtn" onclick="joinWaitlist()">Join Waitlist</button>
+  <div class="hero-eyebrow">
+    <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
+    SSL Certificate Monitoring
   </div>
-  <div id="formMsg"></div>
-  <div class="form-note">No spam. Just launch notification + early-access invite.</div>
+  <h1>Never Let an SSL<br/><span>Certificate Expire Again</span></h1>
+  <p>SSLWatch monitors your domains 24/7 and sends email alerts 30, 14, 7, and 1 day before any certificate expires.</p>
+
+  <div class="free-tool-strip">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#4f6ef7" stroke-width="1.4"/><path d="M4.5 7l2 2L9.5 5" stroke="#4f6ef7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Not sure if your cert is expiring soon?
+    <a href="https://lior-seats.github.io/ssl-cert-checker/">Check any domain free →</a>
+  </div>
+
+  <form class="hero-form" id="hero-form">
+    <input type="email" name="email" placeholder="you@yourcompany.com" required autocomplete="email" />
+    <button type="submit" class="btn-primary">Join Waitlist →</button>
+  </form>
+  <div class="thank-you" id="hero-thank-you">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <circle cx="9" cy="9" r="8" stroke="#34d399" stroke-width="1.6"/>
+      <path d="M5.5 9l2.5 2.5 4.5-5" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    You're on the list! We'll be in touch soon.
+  </div>
+  <p class="hero-sub">Free early access · No credit card · Unsubscribe anytime</p>
 </div>
 
-<!-- ─── PRICING ─── -->
-<div class="pricing-badge">
-  <div class="price-main">$9 <span>/ month</span></div>
-  <div class="price-early">🎉 Early access: 3 months free for waitlist members</div>
+<!-- DOMAINS STRIP -->
+<div class="domains-strip">
+  <p>Monitors any domain — CDNs, subdomains, APIs, client sites</p>
+  <div class="domain-pills">
+    <span class="pill"><span class="pill-dot"></span>yourapp.com — 47 days</span>
+    <span class="pill"><span class="pill-dot expiring"></span>api.yourapp.com — 18 days</span>
+    <span class="pill"><span class="pill-dot"></span>dashboard.yourapp.com — 82 days</span>
+    <span class="pill"><span class="pill-dot critical"></span>client-site.com — 3 days</span>
+    <span class="pill"><span class="pill-dot"></span>staging.yourapp.com — 55 days</span>
+    <span class="pill"><span class="pill-dot expiring"></span>cdn.yourapp.com — 12 days</span>
+  </div>
 </div>
 
-<!-- ─── PAIN SECTION ─── -->
-<div class="section">
-  <div class="section-label">The problem</div>
-  <h2>SSL certificates expire silently — until they don't</h2>
-  <div class="cards">
-    <div class="card">
-      <div class="card-icon">🤫</div>
+<!-- PAIN SECTION -->
+<section id="problem">
+  <div class="section-label">The Problem</div>
+  <h2 class="section-heading">SSL certs expire without warning.<br/>You find out when customers can't reach you.</h2>
+  <p class="section-sub">Every year, thousands of sites go down because of a forgotten SSL certificate. It happens to everyone.</p>
+
+  <div class="pain-grid">
+    <div class="pain-card">
+      <div class="pain-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="8" stroke="#f75c5c" stroke-width="1.6"/>
+          <path d="M10 5v5l3 3" stroke="#f75c5c" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
       <h3>Silent expiry</h3>
-      <p>SSL certs expire without warning. You find out when customers can't reach your site, not before. By then the damage is done.</p>
+      <p>SSL certs expire without warning. You find out when customers can't reach your site and your phone starts ringing. By then the damage is done.</p>
     </div>
-    <div class="card">
-      <div class="card-icon">🚫</div>
+
+    <div class="pain-card">
+      <div class="pain-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M10 2L12.4 7.4L18 8.2L14 12.1L15 18L10 15.3L5 18L6 12.1L2 8.2L7.6 7.4L10 2Z" stroke="#f75c5c" stroke-width="1.6" stroke-linejoin="round"/>
+        </svg>
+      </div>
       <h3>Security warnings</h3>
-      <p>Expired certs show "Not Secure" warnings in every browser. Users leave immediately. Trust is gone in an instant.</p>
+      <p>Expired certs trigger "Not Secure" warnings in every browser. Users leave immediately. Search engines may demote your site. Trust takes weeks to rebuild.</p>
     </div>
-    <div class="card">
-      <div class="card-icon">😬</div>
+
+    <div class="pain-card">
+      <div class="pain-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="3" width="14" height="14" rx="2" stroke="#f75c5c" stroke-width="1.6"/>
+          <path d="M10 7v6M7 10h6" stroke="#f75c5c" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
       <h3>It happens to everyone</h3>
-      <p>Even Let's Encrypt auto-renewal fails silently. CDN certs are forgotten. Client sites drift. Nobody notices until a customer does.</p>
+      <p>Even Let's Encrypt auto-renewal fails silently when DNS changes or server configs shift. External CDN certs and client sites are forgotten until the alert is too late.</p>
     </div>
+  </div>
+</section>
+
+<!-- SOLUTION SECTION -->
+<section id="features" style="padding-top: 0;">
+  <div class="section-label">The Solution</div>
+  <h2 class="section-heading">24/7 monitoring.<br/>Alerts when you can still act.</h2>
+  <p class="section-sub">SSLWatch keeps a continuous eye on every cert across all your domains and tells you before there's a crisis.</p>
+
+  <div class="solution-grid">
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="7.5" stroke="#4f6ef7" stroke-width="1.6"/>
+          <path d="M10 4v6l4 2" stroke="#4f6ef7" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h3>Monitor Up to 50 Domains</h3>
+      <p>Add all your production domains, staging environments, subdomains, and client sites. SSLWatch checks every one, every day.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M4 4h12v3H4z" stroke="#4f6ef7" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M4 9h8v3H4z" stroke="#4f6ef7" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M4 14h5v3H4z" stroke="#4f6ef7" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h3>Email Alerts at 30, 14, 7, and 1 Day</h3>
+      <p>Get notified at exactly the right intervals — enough time to renew without urgency, then escalating reminders as the deadline approaches.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M3 10h14M3 6h14M3 14h8" stroke="#4f6ef7" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h3>Works for Any Domain</h3>
+      <p>Your CDN, subdomains, client sites, internal tools, APIs. If it has an SSL cert, SSLWatch can monitor it — no matter who issued the cert or how it's renewed.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="5" width="14" height="10" rx="2" stroke="#4f6ef7" stroke-width="1.6"/>
+          <path d="M7 9h6M7 12h4" stroke="#4f6ef7" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h3>One-Glance Dashboard</h3>
+      <p>See the status of every cert in a single view. Color-coded by urgency. Know at a glance which ones need attention without opening multiple tabs or running commands.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<div class="pricing-section">
+  <div style="text-align:center;">
+    <div class="section-label" style="margin-bottom:0.5rem;">Pricing</div>
+    <h2 class="section-heading">Simple, affordable pricing</h2>
+    <p class="section-sub" style="margin:0.5rem auto 0;">One plan that covers everything you need.</p>
+  </div>
+
+  <div class="pricing-card">
+    <div class="pricing-badge">🎉 Early Access — 3 months free</div>
+    <div class="pricing-amount"><sup>$</sup>9</div>
+    <div class="pricing-period">per month after early access period</div>
+
+    <div class="early-access-note">
+      Waitlist members get <strong>3 months free</strong> when SSLWatch launches.
+    </div>
+
+    <ul class="pricing-features">
+      <li>Monitor up to 50 domains</li>
+      <li>Email alerts at 30, 14, 7, and 1 day before expiry</li>
+      <li>Works for any domain — CDN, subdomains, APIs</li>
+      <li>Instant check — all cert statuses in one dashboard</li>
+      <li>Daily monitoring — never miss a silent failure</li>
+    </ul>
+
+    <a href="#waitlist" class="btn-primary" style="display:inline-block;text-decoration:none;">
+      Claim Early Access →
+    </a>
   </div>
 </div>
 
-<!-- ─── FEATURES ─── -->
-<div class="section">
-  <div class="section-label">What SSLWatch does</div>
-  <h2>Everything you need. Nothing you don't.</h2>
-  <div class="features-grid">
-    <div class="feat">
-      <div class="feat-check">✓</div>
-      <div>
-        <h4>Monitor up to 50 domains</h4>
-        <p>Your main site, subdomains, APIs, CDN endpoints, client sites — all in one dashboard.</p>
-      </div>
+<!-- WAITLIST SECTION -->
+<div class="waitlist-section" id="waitlist">
+  <div class="waitlist-inner">
+    <div class="section-label" style="text-align:center">Join the Waitlist</div>
+    <h2 class="section-heading">Stop discovering cert expiries<br/>from your customers.</h2>
+    <p class="section-sub">Be first to know when SSLWatch launches. Waitlist members get 3 months free.</p>
+
+    <form class="waitlist-form" id="waitlist-form">
+      <input type="email" name="email" placeholder="you@yourcompany.com" required autocomplete="email" />
+      <button type="submit" class="btn-primary">Join Waitlist →</button>
+    </form>
+
+    <div class="thank-you" id="waitlist-thank-you">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <circle cx="9" cy="9" r="8" stroke="#34d399" stroke-width="1.6"/>
+        <path d="M5.5 9l2.5 2.5 4.5-5" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      You're on the list! We'll be in touch soon.
     </div>
-    <div class="feat">
-      <div class="feat-check">✓</div>
-      <div>
-        <h4>Email alerts at 30, 14, 7 &amp; 1 day</h4>
-        <p>Multiple touchpoints before expiry so you always have time to renew.</p>
-      </div>
-    </div>
-    <div class="feat">
-      <div class="feat-check">✓</div>
-      <div>
-        <h4>Works for any domain</h4>
-        <p>Your CDN, subdomains, client sites, APIs — if it has an SSL cert, SSLWatch monitors it.</p>
-      </div>
-    </div>
-    <div class="feat">
-      <div class="feat-check">✓</div>
-      <div>
-        <h4>Instant certificate dashboard</h4>
-        <p>See all your certs' status in one view. Green, yellow, red — know what needs attention at a glance.</p>
-      </div>
-    </div>
+
+    <p class="form-note">No spam. No credit card. Unsubscribe anytime.</p>
+    <p style="text-align:center;margin-top:1.2rem;font-size:0.88rem;color:var(--muted);">
+      Want to check a cert right now?
+      <a href="https://lior-seats.github.io/ssl-cert-checker/" style="color:var(--accent);font-weight:600">Free SSL Certificate Checker →</a>
+    </p>
   </div>
 </div>
 
-<!-- ─── BOTTOM CTA ─── -->
-<div class="section" style="text-align:center; margin-bottom: 5rem;">
-  <h2 style="margin-bottom:1rem">Join the waitlist today</h2>
-  <p style="color:var(--muted);margin-bottom:2rem;font-size:1.05rem">Early members get 3 months free when we launch.</p>
-  <div style="display:flex;gap:0.65rem;justify-content:center;flex-wrap:wrap;max-width:440px;margin:0 auto">
-    <input
-      type="email"
-      id="emailInput2"
-      class="email-input"
-      placeholder="you@yourcompany.com"
-      style="flex:1;min-width:200px"
-    />
-    <button class="submit-btn" onclick="joinWaitlist2()">Join Waitlist</button>
-  </div>
-  <div id="formMsg2" style="margin-top:1rem;font-size:0.9rem"></div>
-</div>
-
+<!-- FOOTER -->
 <footer>
-  <p>SSLWatch · SSL certificate expiry monitoring · $9/month</p>
-  <p style="margin-top:0.5rem">
-    <a href="https://lior-seats.github.io/ssl-cert-checker/">Free SSL certificate checker tool</a>
+  <p>© 2026 SSLWatch · SSL Certificate Expiry Monitoring</p>
+  <p style="margin-top:0.5rem;font-size:0.82rem">
+    Free tools: <a href="https://lior-seats.github.io/ssl-cert-checker/" style="color:#a78bfa">Check SSL certificate expiry</a>
   </p>
 </footer>
 
 <script>
-  async function submitEmail(email, msgEl) {
-    if (!email || !email.includes('@')) {
-      msgEl.className = 'error';
-      msgEl.style.display = 'block';
-      msgEl.textContent = 'Please enter a valid email address.';
-      return;
-    }
-    const btn = document.getElementById('submitBtn');
-    if (btn) btn.disabled = true;
+  // Hit pixel
+  (function(){try{fetch('https://agent-control-plane-w3m9.onrender.com/api/hit?page=sslwatch-waitlist',{mode:'no-cors'}).catch(function(){});}catch(e){}})();
 
-    try {
-      const resp = await fetch('https://agent-control-plane-w3m9.onrender.com/api/waitlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, source: 'sslwatch' })
-      });
-      if (resp.ok) {
-        msgEl.className = 'success';
-        msgEl.style.display = 'block';
-        msgEl.textContent = "🎉 You're on the list! We'll email you when SSLWatch launches.";
-        document.getElementById('emailInput') && (document.getElementById('emailInput').value = '');
-        document.getElementById('emailInput2') && (document.getElementById('emailInput2').value = '');
-      } else {
-        throw new Error('server error');
-      }
-    } catch (e) {
-      msgEl.className = 'error';
-      msgEl.style.display = 'block';
-      msgEl.textContent = 'Something went wrong. Please try again.';
-    } finally {
-      if (btn) btn.disabled = false;
-    }
-  }
-
-  function joinWaitlist() {
-    const email = document.getElementById('emailInput').value.trim();
-    submitEmail(email, document.getElementById('formMsg'));
-  }
-
-  function joinWaitlist2() {
-    const email = document.getElementById('emailInput2').value.trim();
-    const msg2 = document.getElementById('formMsg2');
-    submitEmail(email, msg2);
-  }
-
-  // Enter key support
-  ['emailInput', 'emailInput2'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        id === 'emailInput' ? joinWaitlist() : joinWaitlist2();
-      }
+  // Smooth scroll for CTA link
+  document.querySelectorAll('a[href="#waitlist"]').forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('waitlist').scrollIntoView({ behavior: 'smooth' });
     });
   });
-</script>
 
+  // Form handler — shared for both forms
+  function handleForm(formId, thankYouId) {
+    var form = document.getElementById(formId);
+    if (!form) return;
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var btn = form.querySelector('button[type="submit"]');
+      var emailInput = form.querySelector('input[type="email"]');
+      var email = emailInput ? emailInput.value.trim() : '';
+      var origText = btn.textContent;
+      btn.textContent = 'Joining…';
+      btn.disabled = true;
+      try {
+        var res = await fetch('https://agent-control-plane-w3m9.onrender.com/api/waitlist', {
+          method: 'POST',
+          body: JSON.stringify({ email: email, source: 'sslwatch' }),
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
+        });
+        if (res.ok) {
+          form.style.display = 'none';
+          var ty = document.getElementById(thankYouId);
+          if (ty) ty.style.display = 'flex';
+        } else {
+          btn.textContent = 'Try again';
+          btn.disabled = false;
+        }
+      } catch(err) {
+        btn.textContent = 'Try again';
+        btn.disabled = false;
+      }
+    });
+  }
+
+  handleForm('hero-form', 'hero-thank-you');
+  handleForm('waitlist-form', 'waitlist-thank-you');
+</script>
 </body>
 </html>
