@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSLWatch Dashboard — Your SSL Monitors</title>
+  <meta name="robots" content="noindex">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+
+    /* ── Layout ── */
+    .header { background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 80%); padding: 2rem 1rem 1.5rem; border-bottom: 1px solid #1e293b; }
+    .header-inner { max-width: 860px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .logo { display: flex; align-items: center; gap: 0.6rem; }
+    .logo-icon { font-size: 1.5rem; }
+    .logo-text { font-size: 1.25rem; font-weight: 800; color: #f8fafc; }
+    .logo-text span { color: #6366f1; }
+    .user-email { font-size: 0.85rem; color: #64748b; }
+
+    main { max-width: 860px; margin: 0 auto; padding: 2rem 1rem; }
+
+    /* ── Add domain form ── */
+    .add-section { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+    .add-section h2 { font-size: 1rem; font-weight: 700; color: #f1f5f9; margin-bottom: 1rem; }
+    .add-row { display: flex; gap: 0.75rem; }
+    .add-input { flex: 1; padding: 0.75rem 1rem; background: #0f172a; border: 1px solid #475569; border-radius: 8px; color: #f1f5f9; font-size: 0.95rem; outline: none; min-width: 0; }
+    .add-input:focus { border-color: #6366f1; }
+    .add-input::placeholder { color: #475569; }
+    .btn-add { padding: 0.75rem 1.4rem; background: #6366f1; color: white; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+    .btn-add:hover { background: #4f46e5; }
+    .btn-add:disabled { background: #334155; cursor: not-allowed; }
+    .add-msg { margin-top: 0.6rem; font-size: 0.85rem; min-height: 1.2em; }
+    .add-msg.ok { color: #34d399; }
+    .add-msg.err { color: #f87171; }
+
+    /* ── Domain table ── */
+    .domains-section h2 { font-size: 1rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.8rem; margin-bottom: 0.75rem; }
+    .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid #334155; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    thead th { background: #1e293b; padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #334155; white-space: nowrap; }
+    tbody tr { border-bottom: 1px solid #1e293b; transition: background 0.1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #1a2540; }
+    tbody td { padding: 0.85rem 1rem; color: #cbd5e1; vertical-align: middle; }
+    td.domain { color: #f1f5f9; font-weight: 600; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.85rem; }
+
+    /* ── Status badge ── */
+    .badge { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.25rem 0.6rem; border-radius: 999px; font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
+    .badge-green  { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+    .badge-yellow { background: rgba(250,204,21,0.12);  color: #fbbf24; border: 1px solid rgba(250,204,21,0.3); }
+    .badge-red    { background: rgba(248,113,113,0.12); color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
+    .badge-gray   { background: rgba(148,163,184,0.1);  color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); }
+
+    /* ── Empty state ── */
+    .empty { text-align: center; padding: 3.5rem 1rem; }
+    .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+    .empty-title { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.5rem; }
+    .empty-sub { font-size: 0.9rem; color: #64748b; line-height: 1.6; }
+
+    /* ── Auth error / loading ── */
+    .centered { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; text-align: center; padding: 2rem; gap: 1rem; }
+    .centered .icon { font-size: 3rem; }
+    .centered h2 { font-size: 1.25rem; font-weight: 700; color: #f1f5f9; }
+    .centered p { color: #94a3b8; font-size: 0.95rem; line-height: 1.6; max-width: 420px; }
+    .spinner { width: 36px; height: 36px; border: 3px solid #334155; border-top-color: #6366f1; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Footer ── */
+    footer { text-align: center; padding: 2rem 1rem; color: #334155; font-size: 0.8rem; }
+    footer .note { color: #475569; margin-top: 0.3rem; }
+
+    @media (max-width: 560px) {
+      .add-row { flex-direction: column; }
+      .btn-add { width: 100%; }
+      thead th:nth-child(3), tbody td:nth-child(3),
+      thead th:nth-child(4), tbody td:nth-child(4) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- States managed by JS -->
+<div id="loading" class="centered">
+  <div class="spinner"></div>
+  <p>Loading your dashboard…</p>
+</div>
+
+<div id="auth-error" class="centered" style="display:none">
+  <div class="icon">🔒</div>
+  <h2>Invalid dashboard link</h2>
+  <p>This link is invalid or has expired. Check your SSLWatch welcome email for the correct dashboard URL.</p>
+  <p><a href="https://lior-seats.github.io/sslwatch-waitlist/" style="color:#6366f1;text-decoration:none;">← Back to SSLWatch</a></p>
+</div>
+
+<div id="app" style="display:none">
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🔒</span>
+        <span class="logo-text">SSL<span>Watch</span></span>
+      </div>
+      <span class="user-email" id="user-email"></span>
+    </div>
+  </header>
+
+  <main>
+    <!-- Add domain -->
+    <div class="add-section">
+      <h2>Monitor a domain</h2>
+      <div class="add-row">
+        <input
+          type="text"
+          class="add-input"
+          id="domain-input"
+          placeholder="example.com"
+          autocomplete="off"
+          autocapitalize="none"
+          spellcheck="false"
+        >
+        <button class="btn-add" id="add-btn">Monitor this domain</button>
+      </div>
+      <div class="add-msg" id="add-msg"></div>
+    </div>
+
+    <!-- Domain list -->
+    <div class="domains-section">
+      <h2>Monitored domains</h2>
+      <div id="domain-list"></div>
+    </div>
+  </main>
+
+  <footer>
+    <div>🔒 SSLWatch — SSL Certificate Expiry Monitor</div>
+    <div class="note">Checks run hourly · Alerts at 30, 14, 7, and 1 day before expiry</div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  const API = "https://agent-control-plane-w3m9.onrender.com";
+
+  // ── Helpers ──────────────────────────────────────────────────────────────
+  function show(id)  { document.getElementById(id).style.display = ""; }
+  function hide(id)  { document.getElementById(id).style.display = "none"; }
+  function el(id)    { return document.getElementById(id); }
+
+  function getToken() {
+    return new URLSearchParams(window.location.search).get("token") || "";
+  }
+
+  function badgeFor(days) {
+    if (days === null || days === undefined) {
+      return '<span class="badge badge-gray">⏳ Pending check</span>';
+    }
+    if (days <= 0)  return '<span class="badge badge-red">🔴 Expired</span>';
+    if (days <= 7)  return `<span class="badge badge-red">🔴 ${days}d left</span>`;
+    if (days <= 30) return `<span class="badge badge-yellow">🟡 ${days}d left</span>`;
+    return `<span class="badge badge-green">🟢 ${days}d left</span>`;
+  }
+
+  function formatDate(iso) {
+    if (!iso) return "—";
+    try {
+      return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+    } catch { return "—"; }
+  }
+
+  // ── Render domain table ──────────────────────────────────────────────────
+  function renderDomains(domains) {
+    const container = el("domain-list");
+    if (!domains || domains.length === 0) {
+      container.innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">🔍</div>
+          <div class="empty-title">No domains yet</div>
+          <div class="empty-sub">Add your first domain above.<br>We'll check it within an hour and send alerts before it expires.</div>
+        </div>`;
+      return;
+    }
+
+    const rows = domains.map(d => `
+      <tr>
+        <td class="domain">${escHtml(d.domain)}</td>
+        <td>${badgeFor(d.daysRemaining)}</td>
+        <td>${d.expiryAt ? formatDate(d.expiryAt) : "—"}</td>
+        <td style="color:#64748b;font-size:0.85rem">${escHtml(d.issuer || "—")}</td>
+        <td style="color:#475569;font-size:0.8rem">${d.lastChecked ? formatDate(d.lastChecked) : "Pending"}</td>
+      </tr>`).join("");
+
+    container.innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Domain</th>
+              <th>Status</th>
+              <th>Expires</th>
+              <th>Issuer</th>
+              <th>Last checked</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  // ── Load dashboard ───────────────────────────────────────────────────────
+  async function loadDashboard(token) {
+    try {
+      const res = await fetch(`${API}/api/sslwatch/dashboard?token=${encodeURIComponent(token)}`);
+      if (res.status === 401) { hide("loading"); show("auth-error"); return null; }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } catch (e) {
+      console.error("Dashboard load error:", e);
+      hide("loading");
+      show("auth-error");
+      return null;
+    }
+  }
+
+  // ── Add domain ───────────────────────────────────────────────────────────
+  async function addDomain(token, domain) {
+    const res = await fetch(`${API}/api/sslwatch/domains`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, domain }),
+    });
+    return { ok: res.ok, status: res.status, data: await res.json() };
+  }
+
+  // ── Main ─────────────────────────────────────────────────────────────────
+  async function init() {
+    const token = getToken();
+    if (!token) { hide("loading"); show("auth-error"); return; }
+
+    // Hit pixel
+    fetch(`${API}/api/hit?page=sslwatch-dashboard`).catch(() => {});
+
+    const data = await loadDashboard(token);
+    if (!data) return;
+
+    // Show app
+    hide("loading");
+    show("app");
+
+    if (data.subscriber?.email) {
+      el("user-email").textContent = data.subscriber.email;
+    }
+
+    renderDomains(data.domains || []);
+
+    // ── Add domain handler ──────────────────────────────────────────────
+    const addBtn = el("add-btn");
+    const domainInput = el("domain-input");
+    const addMsg = el("add-msg");
+
+    async function handleAdd() {
+      const raw = domainInput.value.trim();
+      if (!raw) { addMsg.className = "add-msg err"; addMsg.textContent = "Enter a domain first."; return; }
+
+      addBtn.disabled = true;
+      addBtn.textContent = "Adding…";
+      addMsg.className = "add-msg";
+      addMsg.textContent = "";
+
+      try {
+        const { ok, status, data: result } = await addDomain(token, raw);
+        if (ok) {
+          addMsg.className = "add-msg ok";
+          addMsg.textContent = `✓ ${result.domain || raw} added — we'll check it within the hour.`;
+          domainInput.value = "";
+          // Refresh domain list
+          const fresh = await loadDashboard(token);
+          if (fresh) renderDomains(fresh.domains || []);
+        } else if (status === 401) {
+          addMsg.className = "add-msg err";
+          addMsg.textContent = "Authentication error — please reload the page.";
+        } else {
+          addMsg.className = "add-msg err";
+          addMsg.textContent = result.error || "Failed to add domain. Check the format (e.g. example.com).";
+        }
+      } catch (e) {
+        addMsg.className = "add-msg err";
+        addMsg.textContent = "Network error — please try again.";
+      } finally {
+        addBtn.disabled = false;
+        addBtn.textContent = "Monitor this domain";
+      }
+    }
+
+    addBtn.addEventListener("click", handleAdd);
+    domainInput.addEventListener("keydown", (e) => { if (e.key === "Enter") handleAdd(); });
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
