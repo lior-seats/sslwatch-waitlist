@@ -121,6 +121,11 @@
       <button class="btn-primary" style="width:100%;" onclick="joinWaitlist('pricingEmail','pricingSuccess','pricingError')">Join the Waitlist</button>
       <div id="pricingSuccess" class="success-msg">✅ You're on the waitlist!</div>
       <div id="pricingError" class="error-msg">Something went wrong. Please try again.</div>
+      <div style="margin-top:1.25rem;border-top:1px solid #334155;padding-top:1.25rem">
+        <button onclick="subscribeSslwatch()" id="subscribe-btn" style="width:100%;padding:0.8rem 1.5rem;background:#4f46e5;color:white;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:background 0.2s">Subscribe $9/mo →</button>
+        <div id="subscribe-msg" style="font-size:0.82rem;color:#64748b;margin-top:0.5rem;min-height:1.1rem"></div>
+        <p style="font-size:0.78rem;color:#475569;margin-top:0.35rem">Or join the free waitlist above for early access</p>
+      </div>
     </div>
   </section>
 
@@ -130,6 +135,29 @@
 
   <script>
     fetch('https://agent-control-plane-w3m9.onrender.com/api/hit?page=sslwatch-waitlist', { mode: 'no-cors' }).catch(() => {});
+
+    async function subscribeSslwatch() {
+      const btn = document.getElementById('subscribe-btn');
+      const msg = document.getElementById('subscribe-msg');
+      btn.textContent = 'Redirecting…'; btn.disabled = true;
+      try {
+        const res = await fetch('https://agent-control-plane-w3m9.onrender.com/api/checkout/sslwatch', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({})
+        });
+        const data = await res.json();
+        if (res.status === 503 || !data.ok) {
+          msg.style.color = '#94a3b8';
+          msg.textContent = 'Payments coming soon — join the waitlist above for now.';
+          btn.textContent = 'Subscribe $9/mo →'; btn.disabled = false;
+        } else if (data.url) {
+          window.location.href = data.url;
+        } else { throw new Error('No URL'); }
+      } catch {
+        msg.style.color = '#94a3b8';
+        msg.textContent = 'Payments coming soon — join the waitlist above for now.';
+        btn.textContent = 'Subscribe $9/mo →'; btn.disabled = false;
+      }
+    }
 
     async function joinWaitlist(inputId, successId, errorId) {
       const email = document.getElementById(inputId).value.trim();
