@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSL Status Badge for GitHub README — SSLWatch</title>
+  <meta name="description" content="Embed an SSL certificate status badge in your GitHub README. Shows days until expiry, turns red when expiring. Free, no signup.">
+  <link rel="canonical" href="https://lior-seats.github.io/sslwatch-waitlist/badge.html">
+  <meta property="og:title" content="SSL Status Badge for GitHub README">
+  <meta property="og:description" content="Show your SSL certificate expiry status in your GitHub README. Auto-updates. Free.">
+  <meta property="og:url" content="https://lior-seats.github.io/sslwatch-waitlist/badge.html">
+  <meta property="og:type" content="website">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+    a { color: #6366f1; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .hero { background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 60%); padding: 4rem 1.5rem 3rem; text-align: center; border-bottom: 1px solid #1e293b; }
+    .badge-pill { display: inline-block; background: rgba(99,102,241,.12); border: 1px solid rgba(99,102,241,.3); color: #a5b4fc; padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 1.25rem; }
+    h1 { font-size: 2rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.75rem; line-height: 1.25; }
+    h1 em { font-style: normal; color: #818cf8; }
+    .sub { color: #94a3b8; font-size: 1rem; max-width: 520px; margin: 0 auto; }
+    .container { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.75rem; margin-bottom: 1.5rem; }
+    .card h2 { font-size: 1rem; font-weight: 700; color: #f1f5f9; margin-bottom: 1rem; }
+    /* Badge preview */
+    .badge-preview { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom: 1rem; }
+    .badge-preview img { height: 20px; border-radius: 3px; }
+    .badge-label { font-size: 0.8rem; color: #64748b; }
+    /* Domain input */
+    .input-row { display: flex; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .input-row input { flex: 1; background: #0f172a; border: 1px solid #475569; color: #f1f5f9; border-radius: 8px; padding: 0.65rem 1rem; font-size: 0.95rem; outline: none; font-family: 'SFMono-Regular', Consolas, monospace; }
+    .input-row input:focus { border-color: #6366f1; }
+    .input-row input::placeholder { color: #475569; }
+    .input-row button { background: #6366f1; color: white; border: none; border-radius: 8px; padding: 0.65rem 1.25rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background .15s; }
+    .input-row button:hover { background: #4f46e5; }
+    /* Code block */
+    .code-block { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 1rem 1.25rem; font-family: 'SFMono-Regular', Consolas, monospace; font-size: 0.82rem; color: #a5f3fc; margin: 0.75rem 0; overflow-x: auto; white-space: pre; position: relative; }
+    .copy-code-btn { position: absolute; top: 0.6rem; right: 0.6rem; background: #334155; border: none; border-radius: 5px; color: #94a3b8; padding: 3px 10px; font-size: 0.75rem; cursor: pointer; transition: background .15s; }
+    .copy-code-btn:hover { background: #475569; color: #e2e8f0; }
+    .copy-code-btn.ok { background: #0f4c2a; color: #6ee7b7; }
+    /* Live badge display */
+    #live-preview { margin-top: 1rem; display: none; }
+    #live-preview img { height: 20px; margin-right: 0.5rem; vertical-align: middle; }
+    /* How it works */
+    .step-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    @media (max-width: 600px) { .step-grid { grid-template-columns: 1fr; } h1 { font-size: 1.6rem; } .input-row { flex-direction: column; } }
+    .step { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 1.25rem; }
+    .step-num { font-size: 1.5rem; font-weight: 800; color: #6366f1; margin-bottom: 0.5rem; }
+    .step p { font-size: 0.88rem; color: #94a3b8; margin: 0; }
+    /* CTA */
+    .cta-box { background: linear-gradient(135deg, #1e1b4b, #1e293b); border: 1px solid #6366f1; border-radius: 12px; padding: 2rem; text-align: center; margin-top: 2rem; }
+    .cta-box h3 { font-size: 1.2rem; color: #f8fafc; margin-bottom: 0.5rem; }
+    .cta-box p { color: #94a3b8; margin-bottom: 1.25rem; font-size: 0.9rem; }
+    .cta-btn { display: inline-block; background: #6366f1; color: white; padding: 0.75rem 2rem; border-radius: 8px; font-weight: 600; transition: background .2s; text-decoration: none; }
+    .cta-btn:hover { background: #4f46e5; text-decoration: none; }
+    footer { text-align: center; padding: 2rem 1.5rem; color: #334155; font-size: 0.82rem; border-top: 1px solid #1e293b; }
+  </style>
+</head>
+<body>
+<div class="hero">
+  <div class="badge-pill">FREE · No signup</div>
+  <h1>SSL Status Badge for your <em>GitHub README</em></h1>
+  <p class="sub">Embed a live badge that shows your SSL certificate status. Auto-updates hourly. Turns red when expiry approaches.</p>
+</div>
+
+<div class="container">
+
+  <!-- Badge previews -->
+  <div class="card">
+    <h2>Badge preview</h2>
+    <div class="badge-preview">
+      <div>
+        <img src="https://agent-control-plane-w3m9.onrender.com/badge/ssl?domain=github.com" alt="SSL Status green example">
+        <div class="badge-label" style="margin-top:4px">github.com (green, >30d)</div>
+      </div>
+      <div>
+        <img src="https://img.shields.io/badge/ssl-14d-e7b416" alt="SSL Status yellow example">
+        <div class="badge-label" style="margin-top:4px">example: 7–30 days (yellow)</div>
+      </div>
+      <div>
+        <img src="https://img.shields.io/badge/ssl-3d-e05d44" alt="SSL Status red example">
+        <div class="badge-label" style="margin-top:4px">example: &lt;7 days (red)</div>
+      </div>
+    </div>
+    <p style="font-size:.82rem;color:#475569">The badge auto-refreshes hourly via CDN cache. Colors: 🟢 >30 days &nbsp;🟡 7–30 days &nbsp;🔴 &lt;7 days or expired &nbsp;⬜ unreachable</p>
+  </div>
+
+  <!-- Generator -->
+  <div class="card">
+    <h2>Generate your badge</h2>
+    <div class="input-row">
+      <input type="text" id="domainInput" placeholder="yourdomain.com" oninput="updateCode()" onkeydown="if(event.key==='Enter')previewBadge()">
+      <button onclick="previewBadge()">Preview →</button>
+    </div>
+
+    <div id="live-preview">
+      <img id="badge-img" src="" alt="SSL badge preview">
+      <span id="badge-status" style="font-size:.85rem;color:#94a3b8"></span>
+    </div>
+
+    <div style="margin-top:1.25rem">
+      <p style="font-size:.82rem;color:#94a3b8;margin-bottom:.5rem">Markdown (paste into your README.md):</p>
+      <div class="code-block" id="markdown-code">[![SSL Status](https://agent-control-plane-w3m9.onrender.com/badge/ssl?domain=yourdomain.com)](https://lior-seats.github.io/ssl-cert-checker/)
+<button class="copy-code-btn" id="copy-md-btn" onclick="copyCode('markdown-code','copy-md-btn')">Copy</button></div>
+
+      <p style="font-size:.82rem;color:#94a3b8;margin:.75rem 0 .5rem">HTML (for other platforms):</p>
+      <div class="code-block" id="html-code">&lt;a href="https://lior-seats.github.io/ssl-cert-checker/"&gt;
+  &lt;img src="https://agent-control-plane-w3m9.onrender.com/badge/ssl?domain=yourdomain.com"
+       alt="SSL Status"&gt;
+&lt;/a&gt;
+<button class="copy-code-btn" id="copy-html-btn" onclick="copyCode('html-code','copy-html-btn')">Copy</button></div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="card">
+    <h2>How it works</h2>
+    <div class="step-grid">
+      <div class="step">
+        <div class="step-num">1</div>
+        <p>Enter your domain above and copy the generated Markdown snippet.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <p>Paste it into your README.md. GitHub renders the badge inline.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <p>The badge auto-refreshes hourly. It turns yellow at 30 days, red at 7 days.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-box">
+    <h3>Want alerts before the badge turns red?</h3>
+    <p>SSLWatch monitors your domains and sends email alerts 30, 14, 7, and 1 day before any certificate expires — so you fix it before users notice.</p>
+    <a href="https://lior-seats.github.io/sslwatch-waitlist/" class="cta-btn">Join SSLWatch Waitlist →</a>
+  </div>
+
+</div>
+
+<footer>
+  <a href="https://lior-seats.github.io/ssl-cert-checker/">Free SSL checker</a> ·
+  <a href="https://lior-seats.github.io/sslwatch-waitlist/">SSLWatch</a> ·
+  Built by <a href="https://github.com/lior-seats">lior-seats</a>
+</footer>
+
+<script>
+const BASE = 'https://agent-control-plane-w3m9.onrender.com';
+const CHECKER = 'https://lior-seats.github.io/ssl-cert-checker/';
+
+function getDomain() {
+  return document.getElementById('domainInput').value.trim()
+    .replace(/^https?:\/\//i,'').replace(/\/.*/,'').toLowerCase() || 'yourdomain.com';
+}
+
+function updateCode() {
+  const d = getDomain();
+  const badgeUrl = `${BASE}/badge/ssl?domain=${encodeURIComponent(d)}`;
+  document.getElementById('markdown-code').childNodes[0].textContent =
+    `[![SSL Status](${badgeUrl})](${CHECKER})\n`;
+  document.getElementById('html-code').childNodes[0].textContent =
+    `<a href="${CHECKER}">\n  <img src="${badgeUrl}"\n       alt="SSL Status">\n</a>\n`;
+}
+
+function previewBadge() {
+  const d = getDomain();
+  if (d === 'yourdomain.com') return;
+  const badgeUrl = `${BASE}/badge/ssl?domain=${encodeURIComponent(d)}&_t=${Date.now()}`;
+  const img = document.getElementById('badge-img');
+  const status = document.getElementById('badge-status');
+  const preview = document.getElementById('live-preview');
+  img.src = badgeUrl;
+  img.alt = `SSL badge for ${d}`;
+  status.textContent = `Loading ${d}…`;
+  preview.style.display = 'block';
+  img.onload = () => { status.textContent = `Live badge for ${d}`; };
+  img.onerror = () => { status.textContent = `Could not load badge for ${d}`; };
+  updateCode();
+}
+
+function copyCode(blockId, btnId) {
+  const block = document.getElementById(blockId);
+  const text = block.childNodes[0].textContent.trim();
+  const btn = document.getElementById(btnId);
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('ok'); btn.textContent = '✓ Copied';
+    setTimeout(() => { btn.classList.remove('ok'); btn.textContent = 'Copy'; }, 1800);
+  }).catch(() => {
+    const ta = document.createElement('textarea'); ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    btn.classList.add('ok'); btn.textContent = '✓ Copied';
+    setTimeout(() => { btn.classList.remove('ok'); btn.textContent = 'Copy'; }, 1800);
+  });
+}
+
+// Init with default
+updateCode();
+</script>
+<script>(function(){try{fetch('https://agent-control-plane-w3m9.onrender.com/api/hit?page=ssl-badge',{mode:'no-cors'}).catch(function(){});}catch(e){}})();</script>
+</body>
+</html>
